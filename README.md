@@ -19,6 +19,8 @@ Flash the sketch `arduino/tcmReceiverTimerBased.ino` to the Arduino. Then open
 a minicom session at 9600 Baud 8N1 and check the output. It should look like
 
 ```
+TCM Temperature Sensor Receiver
+Channel=1 Battery=0 ID=11 Temp=1.50
 ```
 
 
