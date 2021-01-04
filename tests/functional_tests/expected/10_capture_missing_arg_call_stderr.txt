@@ -1,0 +1,2 @@
+usage: tcmReceiver capture [-h] OUTPUT_FILE
+tcmReceiver capture: error: the following arguments are required: OUTPUT_FILE

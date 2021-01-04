@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Backup files
+*~
+
+# Temporary files
+.coverage-*
+doc/combined-coverage/
+doc/functional-tests-coverage/
+doc/source/apidoc/
+doc/unittests-coverage/
+
+# Output files
+releases/
