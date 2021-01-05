@@ -6,7 +6,11 @@ Synopsis
 
 .. code-block:: bash
 
-    tcmReceiver [-h|--help] [-d DEVICE] [-c DATAFILE] [-i DATAFILE] [--mqtt-host MQTT_HOST] [--mqtt-port MQTT_PORT] [--mqtt-username MQTT_USERNAME] [--mqtt-password MQTT_PASSWORD] [--mqtt-topic MQTT_TOPIC]
+    tcmReceiver [-h|--help] [-d DEVICE] [-c DATAFILE] [-i DATAFILE] capture OUTPUT_FILE
+
+    tcmReceiver [-h|--help] [-d DEVICE] [-c DATAFILE] [-i DATAFILE] print
+
+    tcmReceiver [-h|--help] [-d DEVICE] [-c DATAFILE] [-i DATAFILE] publish [--mqtt-host MQTT_HOST] [--mqtt-port MQTT_PORT] [--mqtt-username MQTT_USERNAME] [--mqtt-password MQTT_PASSWORD] [--mqtt-topics MQTT_TOPICS]
 
 
 Description
@@ -28,7 +32,7 @@ Options of tcmReceiver
 --mqtt-port MQTT_PORT               MQTT port. [Default: :code:`1883`]
 --mqtt-username MQTT_USERNAME       MQTT username. [Default: :code:`mqtt`]
 --mqtt-password MQTT_PASSWORD       MQTT password. [Default: :code:`mqtt`]
---mqtt-topic MQTT_TOPIC             MQTT topic. [Default: :code:`counters/power`]
+--mqtt-topics MQTT_TOPICS           Comma separated list of channel number and the corresponding MQTT topic. The suffix '/temperature' resp. '/battery_low' is added automatically. [Default: :code:`1=tcm/channel1`]
 
 
 Examples
@@ -36,8 +40,12 @@ Examples
 
 - Capture from the serial line for further investigation::
 
-      $ tcmReceiver -d /dev/ttyUSB0 -c testdata.dat
+      $ tcmReceiver -d /dev/ttyUSB0 capture testdata.dat
 
-- Replay the data from the test data::
+- Replay the data from the test data and print it on stdout::
 
-      $ tcmReceiver -i testdata.dat
+      $ tcmReceiver -i testdata.dat print
+
+- Read from the serial port and publish the data received on channels 1 and 2::
+
+      $ tcmReceiver -d /dev/ttyUSB1 publish --mqtt-topics '1=tcm/garden,2=tcm/garage'
