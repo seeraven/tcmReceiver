@@ -19,8 +19,8 @@ Copyright:
 import argparse
 import atexit
 
+from .extractor import Extractor
 from .serial_ifc import get_serial
-# from .sml_message_processor import process
 
 
 # -----------------------------------------------------------------------------
@@ -64,17 +64,14 @@ def print_cmd(args):
 
     atexit.register(input_fh.close)
 
-    # def sml_file_cb(file_data, sml_file):
-    #     if args.verbose:
-    #         print("INFO: Extracted a new file of %d bytes:" % len(file_data))
-    #         print("      Extracted %d messages:" % len(sml_file.messages))
-    #         for message in sml_file.messages:
-    #             print(message)
-
-    # def obis_data_cb(obj_name, value, unit):
-    #     print("%s: %.3f %s" % (obj_name, value, unit))
-
-    # process(args, input_fh, sml_file_cb, obis_data_cb)
+    extractor = Extractor()
+    while True:
+        buffer = input_fh.read(128)
+        if not buffer and args.input_file:
+            break
+        datasets = extractor.add_bytes(buffer)
+        for dataset in datasets:
+            print(dataset)
 
     input_fh.close()
     return True

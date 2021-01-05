@@ -36,11 +36,11 @@ class MqttInterface:
         self.topics = {}
         for item in args.mqtt_topics.split(','):
             if item.count('=') == 1:
-                obis, topic = item.split('=')
-                self.topics[obis] = topic
+                channel, topic = item.split('=')
+                self.topics[channel] = topic
             else:
                 print("ERROR: Ignoring MQTT item %s. "
-                      "Please use <OBIS ID>=<MQTT Topic> items!" % item)
+                      "Please use <Channel>=<MQTT Topic> items!" % item)
 
         self.client = mqtt.Client("tcmReceiver")
         self.client.username_pw_set(args.mqtt_username, args.mqtt_password)
@@ -55,19 +55,29 @@ class MqttInterface:
         self.client.loop_stop()
         self.client.disconnect()
 
-    def publish(self, obis_id, value):
+    def publish(self, dataset):
         """Publish a new value.
 
         Args:
-            obis_id (str): The OBIS ID as a string, e.g., "1-0:1.8.0*255".
-            value (float): Value to publish.
+            dataset (obj): The dataset to publish.
         """
-        if obis_id in self.topics:
-            ret = self.client.publish(self.topics[obis_id], value)
+        if str(dataset.channel) in self.topics:
+            ret = self.client.publish(self.topics[str(dataset.channel)] + '/temperature',
+                                      dataset.temperature)
             if ret.rc == mqtt.MQTT_ERR_NO_CONN:
                 print("ERROR: MQTT Client is not connected!")
             elif ret.rc == mqtt.MQTT_ERR_QUEUE_SIZE:
                 print("ERROR: MQTT Client queue size exceeded!")
+
+            ret = self.client.publish(self.topics[str(dataset.channel)] + '/battery_low',
+                                      1 if dataset.battery_low else 0)
+            if ret.rc == mqtt.MQTT_ERR_NO_CONN:
+                print("ERROR: MQTT Client is not connected!")
+            elif ret.rc == mqtt.MQTT_ERR_QUEUE_SIZE:
+                print("ERROR: MQTT Client queue size exceeded!")
+
+        else:
+            print("WARNING: Ignoring %s" % dataset)
 
 
 # -----------------------------------------------------------------------------

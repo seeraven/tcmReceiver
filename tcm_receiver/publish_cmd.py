@@ -19,9 +19,9 @@ Copyright:
 import argparse
 import atexit
 
+from .extractor import Extractor
 from .mqtt_ifc import MqttInterface
 from .serial_ifc import get_serial
-# from .sml_message_processor import process
 
 
 # -----------------------------------------------------------------------------
@@ -66,6 +66,14 @@ def publish(args):
     atexit.register(input_fh.close)
 
     mqtt = MqttInterface(args)
+    extractor = Extractor()
+    while True:
+        buffer = input_fh.read(128)
+        if not buffer and args.input_file:
+            break
+        datasets = extractor.add_bytes(buffer)
+        for dataset in datasets:
+            mqtt.publish(dataset)
 
     # def obis_data_cb(obj_name, value, unit):
     #     mqtt.publish(obj_name, value)
@@ -104,10 +112,11 @@ def add_publish_parser(subparsers):
                                 action="store",
                                 default="mqtt")
     publish_parser.add_argument("--mqtt-topics",
-                                help="Comma separated list of OBIS IDs and the "
-                                "corresponding MQTT topic. [Default: %(default)s]",
+                                help="Comma separated list of Channel number and the "
+                                "corresponding MQTT topic. The suffix '/temperature' resp. "
+                                "'/battery_low' is added automatically. [Default: %(default)s]",
                                 action="store",
-                                default="1-0:1.8.0*255=power/total,1-0:16.7.0*255=power/rate")
+                                default="1=tcm/channel1")
     publish_parser.set_defaults(func=publish)
 
 

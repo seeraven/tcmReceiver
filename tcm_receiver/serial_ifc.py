@@ -38,7 +38,7 @@ def get_serial(args):
                                parity=serial.PARITY_NONE,
                                stopbits=serial.STOPBITS_ONE,
                                bytesize=serial.EIGHTBITS,
-                               timeout=None)
+                               timeout=1.0)
         handle.reset_input_buffer()
         handle.reset_output_buffer()
     except serial.serialutil.SerialException:
