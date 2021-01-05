@@ -1,0 +1,20 @@
+#
+# Installation:
+#  - Copy this file to /etc/systemd/system/tcm_receiver.service
+#  - Adjust the line ExecStart to match your setup
+#  - Execute 'systemctl enable tcm_receiver.service'
+#  - Execute 'systemctl start tcm_receiver.service'
+#
+[Unit]
+Description=TCM Receiver
+After=network.target
+
+[Service]
+User=root
+Type=simple
+ExecStart=/root/tcmReceiver_Ubuntu16.04_amd64 -d /dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0 publish
+WorkingDirectory=/root
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
